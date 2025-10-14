@@ -14,7 +14,7 @@ public class Player_Camera : MonoBehaviour
     public float MouseSensitivity = 3.0f;   //마우스 회전 속도
     public float minYAngle = -35f;          //최소 아래쪽 각도
     public float maxYAngle = 60f;           //최대 위쪽 각도
-                                            //마우스 입력 값;
+   //마우스 입력 값;
     [Header("Smooth speed")]
     public float smoothSpeed = 10f;
     private float mosY;     //마우스 좌우
@@ -36,7 +36,7 @@ public class Player_Camera : MonoBehaviour
         mosX += Input.GetAxisRaw("Mouse X") * MouseSensitivity;
         mosY -= Input.GetAxisRaw("Mouse Y") * MouseSensitivity;
 
-        mosX = Mathf.Clamp(mosX, minYAngle, maxYAngle);     //상하 회전 제한
+        //mosX = Mathf.Clamp(mosX, minYAngle, maxYAngle);     //상하 회전 제한
 
         Quaternion rotation = Quaternion.Euler(mosY, mosX, 0); //회전 계산
         Vector3 CameraPosition = Target.position - (rotation * Vector3.forward * Distance) + Vector3.up * Height; // 카메라가 있을 위치
