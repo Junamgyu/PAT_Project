@@ -6,9 +6,12 @@ public class Player_Camera : MonoBehaviour
     [Header("Target Setthing")]
     public Transform Target;
 
+    [Header("Target Look Point")]
+    public float TargetVerticalOffset = 0.4f;   //카메라가 바라볼 플레이어의 수직 중심점 (기본 0.4f)
+
     [Header("Distance Setthing")]
-    public float Distance = 3.0f;
-    public float Height = 1.0f;
+    public float Distance = 4.0f;
+    public float Height = 2.0f;
 
     [Header("Max Rotation")]
     public float MouseSensitivity = 3.0f;   //마우스 회전 속도
@@ -21,10 +24,10 @@ public class Player_Camera : MonoBehaviour
    
    //마우스 입력 값;
     [Header("Smooth speed")]
-    public float smoothSpeed = 10f;
+    public float smoothTime = 0.1f;    //카메라가 목표 위치에 도달하는 데 걸리는 시간 (작을 수록 빠름)
     private float mosY;     //마우스 위아래
     private float mosX;     //마우스 좌우
-
+    private Vector3 currentVelocity = Vector3.zero;     //SmoothDamp 사용을 위한 속도 참조 변수
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -50,15 +53,37 @@ public class Player_Camera : MonoBehaviour
 
         mosY = Mathf.Clamp(mosY, minYAngle, maxYAngle);     //상하 회전 제한
 
-        Quaternion rotation = Quaternion.Euler(mosY, mosX, 0); //회전 계산
+        Quaternion rotation = Quaternion.Euler(mosY, mosX, 0); //회전 계산 Pitch, Yaw, Roll
 
-        
-        Vector3 CameraPosition = Target.position - (rotation * Vector3.forward * Distance) + Vector3.up * Height; // 카메라가 있을 위치
-        transform.position = Vector3.Lerp(transform.position, CameraPosition, smoothSpeed * Time.deltaTime); //부드럽게 이동하기
+        //회전 기준으로 플레이어로부터 떨어진 이상적인 위치 계산
+        Vector3 idealOffset = rotation * Vector3.forward;
+        Vector3 idealPosition = Target.position - (idealOffset * Distance) + Vector3.up * Height;
 
-        transform.LookAt(Target.position + Vector3.up * 1.5f);
+        // 충돌 감지를 위한 레이캐스트
+        Vector3 targetCenter = Target.position + Vector3.up * TargetVerticalOffset; //플레이어의 눈높이
+        Vector3 rayDirection = idealPosition - targetCenter;
+        float rayDistance = rayDirection.magnitude;
+        rayDirection.Normalize();
 
-        
+        RaycastHit hit;
+        Vector3 finalCameraPosition;
+        float currentSmoothTime = smoothTime;
+
+        if (Physics.Raycast(targetCenter, rayDirection, out hit, rayDistance, collisionLayer, QueryTriggerInteraction.Ignore))
+        {
+            finalCameraPosition = hit.point + hit.normal * collisionBuffer;     //충돌 시: 충돌 지점(hit.point)에서 뒤로 살짝 물러난 위치를 최종 위치로 설정
+
+            currentSmoothTime = 0.01f;
+
+        }
+        else
+        {
+            finalCameraPosition = idealPosition;        //충돌 없을 시: 이상적인 위치를 최종 위치로 설정
+        }
+        //카메라 위치 부드럽게 이동 (SmoothDamp) // 충돌 여부에 따라 동적으로 변경된 currentSmoothTIme 사용
+        transform.position = Vector3.SmoothDamp(transform.position, finalCameraPosition, ref currentVelocity, currentSmoothTime);
+
+        transform.LookAt(Target.position + Vector3.up * TargetVerticalOffset); //대상을 바라보게 하기
     }
 
 
