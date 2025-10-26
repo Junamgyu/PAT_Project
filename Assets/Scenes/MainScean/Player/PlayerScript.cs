@@ -11,7 +11,7 @@ public class PlayerScript : MonoBehaviour
     private Transform Cam; // 카메라 transform을 저장할 변수
     private CharacterController controller;     //CharacterController 참조
 
-    //중력 처리를 위한 변수
+    //중력 처리를 위한 변수 (캐릭터 컨트롤러 때문)
     private Vector3 PlayerVelocity;
     private float gravityValue = -9.81f;
 
@@ -91,10 +91,12 @@ public class PlayerScript : MonoBehaviour
         Vector3 horizontalMove = currentMoveDirection * runSpeed;
         PlayerVelocity.y += gravityValue * Time.deltaTime;
 
+
         Vector3 finalMove = horizontalMove;
         finalMove.y = PlayerVelocity.y;
 
-        controller.Move(finalMove * Time.deltaTime);
+        //캐릭터 컴포넌트 이동 함수
+        controller.Move(finalMove * Time.deltaTime);    //캐릭터 이동 실행
 
 
     }

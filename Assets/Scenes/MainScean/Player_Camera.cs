@@ -69,10 +69,10 @@ public class Player_Camera : MonoBehaviour
         Vector3 finalCameraPosition;
         float currentSmoothTime = smoothTime;
 
+
         if (Physics.Raycast(targetCenter, rayDirection, out hit, rayDistance, collisionLayer, QueryTriggerInteraction.Ignore))
         {
             finalCameraPosition = hit.point + hit.normal * collisionBuffer;     //충돌 시: 충돌 지점(hit.point)에서 뒤로 살짝 물러난 위치를 최종 위치로 설정
-
             currentSmoothTime = 0.01f;
 
         }
@@ -80,7 +80,7 @@ public class Player_Camera : MonoBehaviour
         {
             finalCameraPosition = idealPosition;        //충돌 없을 시: 이상적인 위치를 최종 위치로 설정
         }
-        //카메라 위치 부드럽게 이동 (SmoothDamp) // 충돌 여부에 따라 동적으로 변경된 currentSmoothTIme 사용
+        //카메라 위치 부드럽게 이동 (SmoothDamp) // 충돌 여부에 따라 동적으로 변경된 currentSmoothTime 사용
         transform.position = Vector3.SmoothDamp(transform.position, finalCameraPosition, ref currentVelocity, currentSmoothTime);
 
         transform.LookAt(Target.position + Vector3.up * TargetVerticalOffset); //대상을 바라보게 하기
