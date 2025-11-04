@@ -34,34 +34,36 @@ public class Ai_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //! 추적거리는 멀어지고 시각으로만 보고 추격해 올때 애니메이션이 중복이 되버림, 달리기, 걷기가 계속 반복해서 부들대면서 추격 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        bool inSight = PlayerInSight();
 
         //플레이어가 가까우면 추격 시작
-        if (!isChasing && distanceToPlayer <= chaseDis || inSight)
+        if (!isChasing && distanceToPlayer <= chaseDis) // || PlayerInSight()) //! 수정중 시각기능 없음 애니메이션 잘 돌아감
         {
             isChasing = true;
-            animator.SetBool("isChase", true);
-            animator.SetBool("isWalk", false);
-            Debug.Log("Chasing now! inSight!");
+            Debug.Log("Chasing now!");
         }
         //추격 중단 조건 (플레이어가 완전히 멀어졌을 때만 순찰 시작)
-        else if (isChasing && distanceToPlayer >= stopChaseDis && !inSight)  
+        else if (isChasing && distanceToPlayer >= stopChaseDis)
         {
             isChasing = false;
             animator.SetBool("isChase", false);
             animator.SetBool("isWalk", true);
             Debug.Log("Patrol Start!!");
         }
-        //추적거리는 멀어지고 시각으로만 보고 추격해 올때 
+    
 
         if (isChasing)      //추적 모드
         {
             agent.SetDestination(player.position);
+            animator.SetBool("isChase", true);
+            animator.SetBool("isWalk", false);
         }
         else                //순찰 모드
         {
             patrol();
+            animator.SetBool("isWalk", true);
+            animator.SetBool("isChase", false);
         }
 
     }
@@ -96,5 +98,6 @@ public class Ai_Script : MonoBehaviour
             }
         }
         return false;
+        
     }
 }
