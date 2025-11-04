@@ -5,14 +5,16 @@ public class Ai_Script : MonoBehaviour
     public Transform player;    //플레이어 오브젝트
     public Transform[] patrolPoint;     //순찰 지점
     private NavMeshAgent agent;     //추적 오브젝트
-    private int currentPatrolIndex = 0;
-    private bool isChasing = false;    
+    private int currentPatrolIndex = 0;     //추적 지점
+    private bool isChasing = false;
+    Animator animator;
 
     public float chaseDistance = 10.0f;     //추적 시작 거리
     public float stopChaseDistance = 15.0f;     //추적 중단 거리
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
 
         if(patrolPoint.Length > 0)
@@ -34,15 +36,19 @@ public class Ai_Script : MonoBehaviour
         else if (distanceToPlayer >= stopChaseDistance)  //플레이어가 멀어지면 순찰 시작
         {
             isChasing = false;
+            animator.SetBool("isChase", false);
         }
 
         if (isChasing)
         {
             agent.SetDestination(player.position);
+            animator.SetBool("isChase", true);
+            animator.SetBool("isWalk", false);
         }
         else
         {
             patrol();       //순찰 모드
+            animator.SetBool("isWalk", true);
         }
 
     }
