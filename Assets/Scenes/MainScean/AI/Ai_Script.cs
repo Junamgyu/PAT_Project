@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 public class Ai_Script : MonoBehaviour
@@ -13,11 +14,13 @@ public class Ai_Script : MonoBehaviour
 
     [Header("Angle option")]
     public float aiAngle = 90.0f;       //Ai 시야각 90.0f는 정면 180도
+    public float ChaseTime = 3f;         //시야를 잃은 후 추적 유지 시간
+    public float loseTimer = 0f;        //시야 잃은 후 시간 측정
 
     // == 내부 변수 ==
     private NavMeshAgent agent;     //추적 오브젝트
     private int currentPatrolIndex = 0;     //추적 지점 인덱스
-    private bool isChasing = false;
+    private bool isChasing = false;         //기본 추격 상태 = false
     private Animator animator;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -34,42 +37,51 @@ public class Ai_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //! 추적거리는 멀어지고 시각으로만 보고 추격해 올때 애니메이션이 중복이 되버림, 달리기, 걷기가 계속 반복해서 부들대면서 추격 
+        //! 추적거리는 멀어져서 순찰을 하려하는데, 시각거리로는 플레이어를 인식해 추격할 경우 애니메이션이 달리기, 걷기가 계속 반복해서 부들대면서 추격
+        //! 추격은 추격인데 시각으로만 보며 추격하면 애니메이션이 맛감
+
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        //플레이어가 가까우면 추격 시작
-        if (!isChasing && distanceToPlayer <= chaseDis) // || PlayerInSight()) //! 수정중 시각기능 없음 애니메이션 잘 돌아감
+        if (!isChasing && (PlayerInSight() || distanceToPlayer <= chaseDis))     //플레이어가 시야 안에 있거나 일정거리 내에 들어왔을 때 추격 시작
         {
             isChasing = true;
             Debug.Log("Chasing now!");
         }
-        //추격 중단 조건 (플레이어가 완전히 멀어졌을 때만 순찰 시작)
-        else if (isChasing && distanceToPlayer >= stopChaseDis)
-        {
-            isChasing = false;
-            animator.SetBool("isChase", false);
-            animator.SetBool("isWalk", true);
-            Debug.Log("Patrol Start!!");
-        }
-    
 
-        if (isChasing)      //추적 모드
+        if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
             agent.SetDestination(player.position);
+
             animator.SetBool("isChase", true);
             animator.SetBool("isWalk", false);
+
+            if (PlayerInSight())
+            {
+                loseTimer = 0f;     //시야 안이면 타이머 초기화
+            }
+            else
+            {
+                loseTimer += Time.deltaTime;    //시야를 잃은 상태면 타이머 증가            
+            }
+
+            //시야를 잃고 일정 시간 이상 지났거나 너무 멀어지면 추격 해제
+            if ((loseTimer >= ChaseTime) || distanceToPlayer >= stopChaseDis)
+            {
+                isChasing = false;
+            }
         }
-        else                //순찰 모드
+        else               
         {
             patrol();
-            animator.SetBool("isWalk", true);
-            animator.SetBool("isChase", false);
         }
 
     }
 
     void patrol()       //순찰모드 
     {
+        animator.SetBool("isChase", false);
+        animator.SetBool("isWalk", true);
+
         if (patrolPoint.Length == 0) return;
 
         //목적지에 거의 도착하면 다음 순찰 지점으로 변경
@@ -79,7 +91,7 @@ public class Ai_Script : MonoBehaviour
             agent.SetDestination(patrolPoint[currentPatrolIndex].position);
         }
     }
-    
+
     bool PlayerInSight()        //플레이어가 Ai의 시야각 및 시야 감지 거리 내에 있는지 확인
     {
         Vector3 dirToPlayer = player.position - transform.position;             //Ai에서 플레이어로 향하는 방향 벡터 계산
@@ -98,6 +110,22 @@ public class Ai_Script : MonoBehaviour
             }
         }
         return false;
-        
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, chaseDis);    //! 추적 거리 빨강
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, stopChaseDis); //? 추적 중단 파랑
+
+        //todo 시야각 노랑 
+        Gizmos.color = Color.yellow;
+        Vector3 rightLimit = Quaternion.Euler(0, aiAngle / 2, 0) * transform.forward * detectionRange;
+        Vector3 leftLimit = Quaternion.Euler(0, -aiAngle / 2, 0) * transform.forward * detectionRange;
+        Gizmos.DrawLine(transform.position, transform.position + rightLimit);
+        Gizmos.DrawLine(transform.position, transform.position + leftLimit);
     }
 }
+
