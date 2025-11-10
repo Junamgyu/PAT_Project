@@ -24,8 +24,8 @@ public class Ai_Script : MonoBehaviour
     private Animator animator;
 
     // == 순찰 관련 변수 ==
-    private float waitTimer = 0f;
-    private float waitDuration = 2.5f;
+    private float waitTimer = 0f;           //0초 부터 waitDuration초 까지 타이머
+    private float waitDuration = 3f;        //순찰 지점 기다림 3초
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -49,12 +49,16 @@ public class Ai_Script : MonoBehaviour
 
         if (!isChasing && (PlayerInSight() || distanceToPlayer <= chaseDis))     //플레이어가 시야 안에 있거나 일정거리 내에 들어왔을 때 추격 시작
         {
+            agent.isStopped = false;    //이동 재게
+
             isChasing = true;
-            Debug.Log("Chasing now!");
+            //Debug.Log("Chasing now!");
         }
 
         if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
+            agent.isStopped = false; //추격중에는 항상 이동 가능하게
+
             agent.SetDestination(player.position);
 
             animator.SetBool("isChase", true);
@@ -68,7 +72,7 @@ public class Ai_Script : MonoBehaviour
             {
                 loseTimer += Time.deltaTime;    //시야를 잃은 상태면 타이머 증가            
             }
-            
+
             if (!PlayerInSight() && (loseTimer >= ChaseTime) && distanceToPlayer >= stopChaseDis)
             {
                 isChasing = false;
@@ -79,7 +83,7 @@ public class Ai_Script : MonoBehaviour
         else
         {
             patrol();
-            Debug.Log("Patrol Start!");
+            //Debug.Log("Patrol Start!");
         }
 
 
@@ -88,9 +92,7 @@ public class Ai_Script : MonoBehaviour
     void patrol()       //순찰모드 
     {
         if (patrolPoint.Length == 0) return;
-
-        //경로 계산중 이거나 목적지까지 도달하지 않았음 이동
-        if (agent.pathPending) return;
+        if (agent.pathPending) return;               //경로 계산중 이거나 목적지까지 도달하지 않았음 이동
 
         //도착 거리 확인
         if (agent.remainingDistance < 0.5f)
