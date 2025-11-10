@@ -22,6 +22,10 @@ public class Ai_Script : MonoBehaviour
     private int currentPatrolIndex = 0;     //추적 지점 인덱스
     private bool isChasing = false;         //기본 추격 상태 = false
     private Animator animator;
+
+    // == 순찰 관련 변수 ==
+    private float waitTimer = 0f;
+    private float waitDuration = 2.5f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -64,8 +68,7 @@ public class Ai_Script : MonoBehaviour
             {
                 loseTimer += Time.deltaTime;    //시야를 잃은 상태면 타이머 증가            
             }
-
-            //시각으로 인식 못하고 추적타임 지나고, 추적범위를 지났을때 순찰모드
+            
             if (!PlayerInSight() && (loseTimer >= ChaseTime) && distanceToPlayer >= stopChaseDis)
             {
                 isChasing = false;
@@ -83,14 +86,34 @@ public class Ai_Script : MonoBehaviour
     }
 
     void patrol()       //순찰모드 
-    { 
+    {
         if (patrolPoint.Length == 0) return;
 
-        //목적지에 거의 도착하면 다음 순찰 지점으로 변경
-        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        //경로 계산중 이거나 목적지까지 도달하지 않았음 이동
+        if (agent.pathPending) return;
+
+        //도착 거리 확인
+        if (agent.remainingDistance < 0.5f)
         {
-            currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoint.Length;
-            agent.SetDestination(patrolPoint[currentPatrolIndex].position);
+            waitTimer += Time.deltaTime;        //! 지점 도착후 타이머 시작
+
+            //지점 도착후 3초 이상일 경우 다른 지점으로 이동   
+            if (waitTimer >= waitDuration)
+            {
+                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoint.Length;
+                agent.SetDestination(patrolPoint[currentPatrolIndex].position);
+                waitTimer = 0f;
+            }
+            else
+            {
+                agent.isStopped = true; //대기중엔 멈춰있기
+                animator.SetBool("isWalk", false);
+            }
+        }
+        else
+        {
+            agent.isStopped = false;    //이동중엔 경로 계속 갱신
+            animator.SetBool("isWalk", true);
         }
     }
 
