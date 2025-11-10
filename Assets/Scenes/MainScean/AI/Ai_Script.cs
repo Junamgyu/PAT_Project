@@ -28,10 +28,11 @@ public class Ai_Script : MonoBehaviour
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
 
-        if(patrolPoint.Length > 0)
+        if (patrolPoint.Length > 0)
         {
             agent.SetDestination(patrolPoint[0].position);
         }
+        animator.SetBool("isWalk", true);
     }
 
     // Update is called once per frame
@@ -64,24 +65,25 @@ public class Ai_Script : MonoBehaviour
                 loseTimer += Time.deltaTime;    //시야를 잃은 상태면 타이머 증가            
             }
 
-            //시야를 잃고 일정 시간 이상 지났거나 너무 멀어지면 추격 해제
-            if ((loseTimer >= ChaseTime) || distanceToPlayer >= stopChaseDis)
+            //시각으로 인식 못하고 추적타임 지나고, 추적범위를 지났을때 순찰모드
+            if (!PlayerInSight() && (loseTimer >= ChaseTime) && distanceToPlayer >= stopChaseDis)
             {
                 isChasing = false;
+                animator.SetBool("isChase", false);
+                animator.SetBool("isWalk", true);
             }
         }
-        else               
+        else
         {
             patrol();
+            Debug.Log("Patrol Start!");
         }
+
 
     }
 
     void patrol()       //순찰모드 
-    {
-        animator.SetBool("isChase", false);
-        animator.SetBool("isWalk", true);
-
+    { 
         if (patrolPoint.Length == 0) return;
 
         //목적지에 거의 도착하면 다음 순찰 지점으로 변경
