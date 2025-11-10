@@ -42,9 +42,6 @@ public class Ai_Script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //! 추적거리는 멀어져서 순찰을 하려하는데, 시각거리로는 플레이어를 인식해 추격할 경우 애니메이션이 달리기, 걷기가 계속 반복해서 부들대면서 추격
-        //! 추격은 추격인데 시각으로만 보며 추격하면 애니메이션이 맛감
-
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if (!isChasing && (PlayerInSight() || distanceToPlayer <= chaseDis))     //플레이어가 시야 안에 있거나 일정거리 내에 들어왔을 때 추격 시작
@@ -57,7 +54,7 @@ public class Ai_Script : MonoBehaviour
 
         if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
-            agent.isStopped = false; //추격중에는 항상 이동 가능하게
+            agent.isStopped = false;  //추격중에는 항상 이동 가능하게
 
             agent.SetDestination(player.position);
 
@@ -85,8 +82,6 @@ public class Ai_Script : MonoBehaviour
             patrol();
             //Debug.Log("Patrol Start!");
         }
-
-
     }
 
     void patrol()       //순찰모드 
@@ -102,8 +97,8 @@ public class Ai_Script : MonoBehaviour
             //지점 도착후 3초 이상일 경우 다른 지점으로 이동   
             if (waitTimer >= waitDuration)
             {
-                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoint.Length;
-                agent.SetDestination(patrolPoint[currentPatrolIndex].position);
+                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoint.Length;         //현재 순찰 인덱스를 다음 인덱스로 변환
+                agent.SetDestination(patrolPoint[currentPatrolIndex].position);             //해당 인덱스로 이동
                 waitTimer = 0f;
             }
             else
@@ -138,6 +133,7 @@ public class Ai_Script : MonoBehaviour
         }
         return false;
     }
+
 
     private void OnDrawGizmosSelected()
     {
