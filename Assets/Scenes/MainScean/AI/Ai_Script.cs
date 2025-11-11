@@ -47,10 +47,19 @@ public class Ai_Script : MonoBehaviour
         if (!isChasing && (PlayerInSight() || distanceToPlayer <= chaseDis))     //플레이어가 시야 안에 있거나 일정거리 내에 들어왔을 때 추격 시작
         {
             agent.isStopped = false;    //이동 재게
-
             isChasing = true;
             //Debug.Log("Chasing now!");
+
+            AIBlackboard.Instance.ReportPlayer(player.position);        //? 공유 알림
         }
+
+        if(!isChasing && AIBlackboard.Instance.playerDetect)    //? 순찰중 플레이어 위치 공유 받을때 
+        {
+            isChasing = true;
+            agent.SetDestination(AIBlackboard.Instance.lastPos);
+            Debug.Log($"{gameObject.name} is joining chase via shared data!");      
+        }
+
 
         if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
@@ -64,6 +73,7 @@ public class Ai_Script : MonoBehaviour
             if (PlayerInSight())
             {
                 loseTimer = 0f;     //시야 안이면 타이머 초기화
+                AIBlackboard.Instance.lastPos = player.position;    //? 플레이어 위치 갱신
             }
             else
             {
@@ -75,16 +85,19 @@ public class Ai_Script : MonoBehaviour
                 isChasing = false;
                 animator.SetBool("isChase", false);
                 animator.SetBool("isWalk", true);
+
+                AIBlackboard.Instance.ClearDetection();
+                Debug.Log($"{gameObject.name} was fail the chasing");
             }
         }
         else
         {
-            patrol();
+            Patrol();
             //Debug.Log("Patrol Start!");
         }
     }
 
-    void patrol()       //순찰모드 
+    void Patrol()       //순찰모드 
     {
         if (patrolPoint.Length == 0) return;
         if (agent.pathPending) return;               //경로 계산중 이거나 목적지까지 도달하지 않았음 이동
