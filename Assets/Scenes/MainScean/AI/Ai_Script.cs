@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+
 public class Ai_Script : MonoBehaviour
 {
     // == 공개 변수 설정 ==
@@ -26,17 +27,34 @@ public class Ai_Script : MonoBehaviour
     // == 순찰 관련 변수 ==
     private float waitTimer = 0f;           //0초 부터 waitDuration초 까지 타이머
     private float waitDuration = 3f;        //순찰 지점 기다림 3초
+
+    // == 포위 군집 관련 변수 ==
+    private float updateTimer = 0f;         //? Flocking 갱신 주기
+    private float updateInterval = 0.25f;       //? 계산 주기 (성능 최적화용)
+
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
 
+        //블랙보드에 등록
+        if (AIBlackboard.Instance != null)
+            AIBlackboard.Instance.RegisterAI(transform);
+
         if (patrolPoint.Length > 0)
         {
             agent.SetDestination(patrolPoint[0].position);
         }
         animator.SetBool("isWalk", true);
+    }
+
+    void OnDestroy()        //Formation 추가
+    {
+        if (AIBlackboard.Instance != null)
+            AIBlackboard.Instance.UnregisterAI(transform);        
     }
 
     // Update is called once per frame
@@ -48,24 +66,21 @@ public class Ai_Script : MonoBehaviour
         {
             agent.isStopped = false;    //이동 재게
             isChasing = true;
-            //Debug.Log("Chasing now!");
-
             AIBlackboard.Instance.ReportPlayer(player.position);        //? 공유 알림
         }
 
-        if(!isChasing && AIBlackboard.Instance.playerDetect)    //? 순찰중 플레이어 위치 공유 받을때 
+        //블랙보드 기반 추격
+        if (!isChasing && AIBlackboard.Instance.playerDetect)    //? 순찰중 플레이어 위치 공유 받을때 
         {
             isChasing = true;
             agent.SetDestination(AIBlackboard.Instance.lastPos);
-            Debug.Log($"{gameObject.name} is joining chase via shared data!");      
+            Debug.Log($"{gameObject.name} is joining chase via shared data!");
         }
 
-
+        // == 추적 상태 == //
         if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
             agent.isStopped = false;  //추격중에는 항상 이동 가능하게
-
-            agent.SetDestination(player.position);
 
             animator.SetBool("isChase", true);
             animator.SetBool("isWalk", false);
@@ -74,12 +89,22 @@ public class Ai_Script : MonoBehaviour
             {
                 loseTimer = 0f;     //시야 안이면 타이머 초기화
                 AIBlackboard.Instance.lastPos = player.position;    //? 플레이어 위치 갱신
+                AIBlackboard.Instance.formationCenter = player.position;   //? Forma
             }
             else
             {
                 loseTimer += Time.deltaTime;    //시야를 잃은 상태면 타이머 증가            
             }
 
+            //? flocking + formation 적용
+            updateTimer += Time.deltaTime;
+            if (updateTimer >= updateInterval)
+            {
+                updateTimer = 0f;
+                MoveWithFF();
+            }
+
+            //추격 중단 조건
             if (!PlayerInSight() && (loseTimer >= ChaseTime) && distanceToPlayer >= stopChaseDis)
             {
                 isChasing = false;
@@ -93,9 +118,31 @@ public class Ai_Script : MonoBehaviour
         else
         {
             Patrol();
-            //Debug.Log("Patrol Start!");
+
         }
     }
+    
+    void MoveWithFF()
+    {
+        if (AIBlackboard.Instance == null || !AIBlackboard.Instance.playerDetect)
+            return;
+
+        // 블랙보드에서 방향 백터 계산
+        Vector3 dir = AIBlackboard.Instance.GetFlockingDir(transform);
+
+        //목표 위치: 플레이어 중심 + 형성된 방향
+        Vector3 targetPos = AIBlackboard.Instance.formationCenter + dir * AIBlackboard.Instance.FormationRadius;
+
+        //이동 (네비매시 경로 갱신)
+        agent.SetDestination(targetPos);
+
+        if (dir != Vector3.zero)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+        }
+    }
+    
 
     void Patrol()       //순찰모드 
     {
@@ -146,6 +193,7 @@ public class Ai_Script : MonoBehaviour
         }
         return false;
     }
+    // == 군집 + 포위 코드 ==
 
 
     private void OnDrawGizmosSelected()
