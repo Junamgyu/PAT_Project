@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -18,6 +19,11 @@ public class Ai_Script : MonoBehaviour
     public float ChaseTime = 3f;         //시야를 잃은 후 추적 유지 시간
     public float loseTimer = 0f;        //시야 잃은 후 시간 측정
 
+    [Header("Formation Settings")]
+    public float formationDistance = 12f;       //포위 시작 거리
+    public float directChaseDistance = 5f;      //직접 추격 시작 거리
+    public float formationReachThreshold = 2f;  //포메이션 위치 도달 판정 거리
+
     // == 내부 변수 ==
     private NavMeshAgent agent;     //추적 오브젝트
     private int currentPatrolIndex = 0;     //추적 지점 인덱스
@@ -32,6 +38,9 @@ public class Ai_Script : MonoBehaviour
     private float updateTimer = 0f;         //? Flocking 갱신 주기
     private float updateInterval = 0.25f;       //? 계산 주기 (성능 최적화용)
 
+    //Formation status
+    private bool isInFormation = false;
+    private Vector3 currentFormationTarget;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -74,9 +83,12 @@ public class Ai_Script : MonoBehaviour
         {
             isChasing = true;
             agent.SetDestination(AIBlackboard.Instance.lastPos);
-            Debug.Log($"{gameObject.name} is joining chase via shared data!");
+            Debug.Log($"{gameObject.name} 플레이어 정보 공유 받음!");
         }
 
+        //! 치명적 버그 플레이어 추격 실패가 자주 반복됨 -> 시야에 들어와 있을시 추격을 해야 하는데 시야 밖에 있어도 추격 실패가 되는 것 같음 확인 필요
+        //! 추격 실패가 되면 -> 다른 AI도 실패할 가능성 커짐
+        //! AI 각자 다 따로 노는 느낌이 가장 큼
         // == 추적 상태 == //
         if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
@@ -96,12 +108,18 @@ public class Ai_Script : MonoBehaviour
                 loseTimer += Time.deltaTime;    //시야를 잃은 상태면 타이머 증가            
             }
 
-            //? flocking + formation 적용
+            //거리별 행동 결정
             updateTimer += Time.deltaTime;
             if (updateTimer >= updateInterval)
             {
                 updateTimer = 0f;
-                MoveWithFF();
+
+                if (distanceToPlayer > formationDistance)             // 멀리 있을 때 -> 넓은 포위 진형
+                    MoveToFormation(12f);
+                else if (distanceToPlayer > directChaseDistance)         // 중간 거리 -> 좁은 포위 진형
+                    MoveToFormation(6f);
+                else                                    // 근거리 -> 직접 추적
+                    DirectChase();
             }
 
             //추격 중단 조건
@@ -112,7 +130,7 @@ public class Ai_Script : MonoBehaviour
                 animator.SetBool("isWalk", true);
 
                 AIBlackboard.Instance.ClearDetection();
-                Debug.Log($"{gameObject.name} was fail the chasing");
+                Debug.Log($"{gameObject.name} 추격 실패");
             }
         }
         else
@@ -121,26 +139,77 @@ public class Ai_Script : MonoBehaviour
 
         }
     }
-    
-    void MoveWithFF()
+
+    void MoveToFormation(float radius)
     {
         if (AIBlackboard.Instance == null || !AIBlackboard.Instance.playerDetect)
             return;
 
-        // 블랙보드에서 방향 백터 계산
-        Vector3 dir = AIBlackboard.Instance.GetFlockingDir(transform);
+        // 고정된 포메이션 위치 계산
+        Vector3 formationPos = AIBlackboard.Instance.GetFormationPosition(
+            transform,
+            AIBlackboard.Instance.formationCenter,
+            radius
+        );
 
-        //목표 위치: 플레이어 중심 + 형성된 방향
-        Vector3 targetPos = AIBlackboard.Instance.formationCenter + dir * AIBlackboard.Instance.FormationRadius;
+        currentFormationTarget = formationPos;
 
-        //이동 (네비매시 경로 갱신)
+        //포메이션 위치에 도달했는지 확인
+        float distToFormation = Vector3.Distance(transform.position, formationPos);
+
+        if (distToFormation > formationReachThreshold)
+        {
+            // 포메이션 위치로 이동 중
+            isInFormation = false;
+
+            // Flocking 효과 적용 (충돌 방지)
+            Vector3 flockingDir = AIBlackboard.Instance.GetFlockingDir(transform);
+            Vector3 toFormation = (formationPos - transform.position).normalized;
+
+            // 포메이션으로 가는 방향 + Flocking 효과 혼합
+            Vector3 finalDir = (toFormation * 0.7f + flockingDir * 0.3f).normalized;
+            Vector3 targetPos = transform.position + finalDir * agent.speed;
+
+            agent.SetDestination(formationPos);
+        }
+        else
+        {
+            // 포메이션 위치에 도착 - 플레이어를 향해 회전만
+            isInFormation = true;
+            agent.SetDestination(transform.position);   // 현재 위치 유지
+
+            //플레이어 방향으로 회전
+            Vector3 lookDir = (player.position - transform.position).normalized;
+            lookDir.y = 0;
+            if (lookDir != Vector3.zero)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(lookDir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+            }
+        }
+    }
+    
+    void DirectChase()
+    {
+        //직접 추격 모드 - 플레이어를 바로 쫓아감
+        isInFormation = false;
+
+        //약간의 Flocking 효과만 추가 (다른 AI와 충돌 방지)
+        Vector3 flockingDir = AIBlackboard.Instance.GetFlockingDir(transform);
+        Vector3 toPlayer = (player.position - transform.position).normalized;
+
+        //플레이어 추적 80프로 + Flocking 20프로
+        Vector3 finalDir = (toPlayer * 0.8f + flockingDir * 0.2f).normalized;
+        Vector3 targetPos = player.position + (transform.position - player.position).normalized * 1f;
+
         agent.SetDestination(targetPos);
 
-        if (dir != Vector3.zero)
+        if (finalDir != Vector3.zero)
         {
-            Quaternion targetRot = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+            Quaternion targetRot = Quaternion.LookRotation(finalDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 8f);
         }
+    
     }
     
 
@@ -193,8 +262,6 @@ public class Ai_Script : MonoBehaviour
         }
         return false;
     }
-    // == 군집 + 포위 코드 ==
-
 
     private void OnDrawGizmosSelected()
     {
