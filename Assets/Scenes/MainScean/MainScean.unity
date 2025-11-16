@@ -5276,6 +5276,9 @@ MonoBehaviour:
   aiAngle: 90
   ChaseTime: 3
   loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 5
+  formationReachThreshold: 2
 --- !u!195 &646490437
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5320,7 +5323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.42
+      value: -2.05
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5328,7 +5331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -19.83
+      value: -15.94
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5874,6 +5877,9 @@ MonoBehaviour:
   aiAngle: 90
   ChaseTime: 3
   loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 5
+  formationReachThreshold: 2
 --- !u!195 &700781204
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -7106,6 +7112,9 @@ MonoBehaviour:
   aiAngle: 90
   ChaseTime: 3
   loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 5
+  formationReachThreshold: 2
 --- !u!95 &817326494
 Animator:
   serializedVersion: 7
@@ -12088,6 +12097,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AIBlackboard
   playerDetect: 0
   lastPos: {x: 0, y: 0, z: 0}
+  aiAgents: []
+  neighborRadius: 5
+  separationWeight: 1.5
+  alignmentWeight: 1
+  cohesionWeight: 1
+  FormationRadius: 5
+  formationCenter: {x: 0, y: 0, z: 0}
 --- !u!1 &1407521399
 GameObject:
   m_ObjectHideFlags: 0
@@ -12845,6 +12861,9 @@ MonoBehaviour:
   aiAngle: 90
   ChaseTime: 3
   loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 5
+  formationReachThreshold: 2
 --- !u!195 &1457006287
 NavMeshAgent:
   m_ObjectHideFlags: 0

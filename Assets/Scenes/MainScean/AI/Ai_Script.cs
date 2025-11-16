@@ -16,7 +16,7 @@ public class Ai_Script : MonoBehaviour
 
     [Header("Angle option")]
     public float aiAngle = 90.0f;       //Ai 시야각 90.0f는 정면 180도
-    public float ChaseTime = 3f;         //시야를 잃은 후 추적 유지 시간
+    public float ChaseTime = 5f;         //시야를 잃은 후 추적 유지 시간
     public float loseTimer = 0f;        //시야 잃은 후 시간 측정
 
     [Header("Formation Settings")]
@@ -36,11 +36,13 @@ public class Ai_Script : MonoBehaviour
 
     // == 포위 군집 관련 변수 ==
     private float updateTimer = 0f;         //? Flocking 갱신 주기
-    private float updateInterval = 0.25f;       //? 계산 주기 (성능 최적화용)
+    private float updateInterval = 0.1f;       //? 계산 주기 (성능 최적화용)
 
     //Formation status
     private bool isInFormation = false;
     private Vector3 currentFormationTarget;
+    private float formationUpdateTimer = 0f;        //? 포메이션 지속 갱신용
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -97,10 +99,11 @@ public class Ai_Script : MonoBehaviour
             animator.SetBool("isChase", true);
             animator.SetBool("isWalk", false);
 
-            if (PlayerInSight())
+            //시야에 있거나 가까이 있으면 위치 갱신
+            if (PlayerInSight() || (distanceToPlayer <= detectionRange))
             {
                 loseTimer = 0f;     //시야 안이면 타이머 초기화
-                AIBlackboard.Instance.lastPos = player.position;    //? 플레이어 위치 갱신
+                AIBlackboard.Instance.ReportPlayer(player.position);    //? 플레이어 위치 갱신
                 AIBlackboard.Instance.formationCenter = player.position;   //? Forma
             }
             else
@@ -122,12 +125,52 @@ public class Ai_Script : MonoBehaviour
                     DirectChase();
             }
 
+            //포메이션 상태일 때도 지속적으로 위치 갱신
+            if (isInFormation)
+            {
+                formationUpdateTimer += Time.deltaTime;
+                if (formationUpdateTimer >= 0.2f)           //0.2초 마다 포메이션 재계산
+                {
+                    formationUpdateTimer = 0f;
+
+                    //현재 거리에 맞는 반경으로 포메이션 위치 재계산
+                    float currentRadius = distanceToPlayer > formationDistance ? 12f : 6f;
+                    Vector3 newFormationPos = AIBlackboard.Instance.GetFormationPosition(transform, player.position, currentRadius);    //항상 최신 플레이어 위치 사용
+
+                    //새 포메이션 위치가 현재 위치에서 일정 거리 이상 떨어져있으면 이동
+                    if (Vector3.Distance(transform.position, newFormationPos) > formationReachThreshold)
+                    {
+                        isInFormation = false;          //다시 이동 모드로
+                        agent.SetDestination(newFormationPos);
+                    }
+                }
+            }
+
             //추격 중단 조건
-            if (!PlayerInSight() && (loseTimer >= ChaseTime) && distanceToPlayer >= stopChaseDis)
+            if (loseTimer >= ChaseTime && distanceToPlayer >= stopChaseDis)
             {
                 isChasing = false;
+                isInFormation = false;
                 animator.SetBool("isChase", false);
                 animator.SetBool("isWalk", true);
+                loseTimer = 0f;
+                formationUpdateTimer = 0f;
+
+                //마지막 Ai가 추격을 포기할 때만 블랙보드 초기화
+                bool anyOtherAIChasing = false;
+                foreach (var ai in AIBlackboard.Instance.aiAgents)
+                {
+                    if (ai != transform && ai.GetComponent<Ai_Script>().isChasing)
+                    {
+                        anyOtherAIChasing = true;
+                        break;
+                    }
+                }
+                
+                if (!anyOtherAIChasing)
+                {
+                    AIBlackboard.Instance.ClearDetection();
+                }
 
                 AIBlackboard.Instance.ClearDetection();
                 Debug.Log($"{gameObject.name} 추격 실패");
@@ -145,15 +188,14 @@ public class Ai_Script : MonoBehaviour
         if (AIBlackboard.Instance == null || !AIBlackboard.Instance.playerDetect)
             return;
 
-        // 고정된 포메이션 위치 계산
+        // 항상 최신 플레이어 위치 기준으로 포메이션 계산
         Vector3 formationPos = AIBlackboard.Instance.GetFormationPosition(
             transform,
-            AIBlackboard.Instance.formationCenter,
+            player.position,    // formationCenter 대신 Player.position 직접 사용
             radius
         );
 
         currentFormationTarget = formationPos;
-
         //포메이션 위치에 도달했는지 확인
         float distToFormation = Vector3.Distance(transform.position, formationPos);
 
@@ -166,17 +208,23 @@ public class Ai_Script : MonoBehaviour
             Vector3 flockingDir = AIBlackboard.Instance.GetFlockingDir(transform);
             Vector3 toFormation = (formationPos - transform.position).normalized;
 
-            // 포메이션으로 가는 방향 + Flocking 효과 혼합
+            // 포메이션 70% + Flocking 30%
             Vector3 finalDir = (toFormation * 0.7f + flockingDir * 0.3f).normalized;
-            Vector3 targetPos = transform.position + finalDir * agent.speed;
 
             agent.SetDestination(formationPos);
+
+            // 이동 방향으로 회전
+            if (finalDir != Vector3.zero)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(finalDir);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+            }
+
         }
         else
         {
             // 포메이션 위치에 도착 - 플레이어를 향해 회전만
             isInFormation = true;
-            agent.SetDestination(transform.position);   // 현재 위치 유지
 
             //플레이어 방향으로 회전
             Vector3 lookDir = (player.position - transform.position).normalized;
@@ -186,6 +234,9 @@ public class Ai_Script : MonoBehaviour
                 Quaternion targetRot = Quaternion.LookRotation(lookDir);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
             }
+
+            // 제자리에 멈추지 않고 포메이션 위치 유지
+            agent.SetDestination(formationPos);
         }
     }
     
@@ -204,6 +255,7 @@ public class Ai_Script : MonoBehaviour
 
         agent.SetDestination(targetPos);
 
+        //이동 방향으로 회전
         if (finalDir != Vector3.zero)
         {
             Quaternion targetRot = Quaternion.LookRotation(finalDir);
