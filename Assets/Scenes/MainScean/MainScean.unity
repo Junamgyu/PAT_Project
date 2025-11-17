@@ -5277,8 +5277,9 @@ MonoBehaviour:
   ChaseTime: 3
   loseTimer: 0
   formationDistance: 12
-  directChaseDistance: 5
+  directChaseDistance: 8
   formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!195 &646490437
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5289,7 +5290,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -5878,8 +5879,9 @@ MonoBehaviour:
   ChaseTime: 3
   loseTimer: 0
   formationDistance: 12
-  directChaseDistance: 5
+  directChaseDistance: 8
   formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!195 &700781204
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5890,7 +5892,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -7076,7 +7078,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -7113,8 +7115,9 @@ MonoBehaviour:
   ChaseTime: 3
   loseTimer: 0
   formationDistance: 12
-  directChaseDistance: 5
+  directChaseDistance: 8
   formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!95 &817326494
 Animator:
   serializedVersion: 7
@@ -12862,8 +12865,9 @@ MonoBehaviour:
   ChaseTime: 3
   loseTimer: 0
   formationDistance: 12
-  directChaseDistance: 5
+  directChaseDistance: 8
   formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!195 &1457006287
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -12874,7 +12878,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120

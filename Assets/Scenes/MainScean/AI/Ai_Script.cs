@@ -21,8 +21,11 @@ public class Ai_Script : MonoBehaviour
 
     [Header("Formation Settings")]
     public float formationDistance = 12f;       //포위 시작 거리
-    public float directChaseDistance = 5f;      //직접 추격 시작 거리
+    public float directChaseDistance = 8f;      //직접 추격 시작 거리
     public float formationReachThreshold = 2f;  //포메이션 위치 도달 판정 거리
+    public float modeTransitionBuffer = 1.5f;
+    
+    
 
     // == 내부 변수 ==
     private NavMeshAgent agent;     //추적 오브젝트
@@ -43,6 +46,8 @@ public class Ai_Script : MonoBehaviour
     private Vector3 currentFormationTarget;
     private float formationUpdateTimer = 0f;        //? 포메이션 지속 갱신용
 
+    private enum ChaseMode { WideFormation, NarrowFormation, DirectChase}
+    private ChaseMode currentChaseMode = ChaseMode.WideFormation;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -88,9 +93,6 @@ public class Ai_Script : MonoBehaviour
             Debug.Log($"{gameObject.name} 플레이어 정보 공유 받음!");
         }
 
-        //! 치명적 버그 플레이어 추격 실패가 자주 반복됨 -> 시야에 들어와 있을시 추격을 해야 하는데 시야 밖에 있어도 추격 실패가 되는 것 같음 확인 필요
-        //! 추격 실패가 되면 -> 다른 AI도 실패할 가능성 커짐
-        //! AI 각자 다 따로 노는 느낌이 가장 큼
         // == 추적 상태 == //
         if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
@@ -117,14 +119,51 @@ public class Ai_Script : MonoBehaviour
             {
                 updateTimer = 0f;
 
-                if (distanceToPlayer > formationDistance)             // 멀리 있을 때 -> 넓은 포위 진형
-                    MoveToFormation(12f);
-                else if (distanceToPlayer > directChaseDistance)         // 중간 거리 -> 좁은 포위 진형
-                    MoveToFormation(6f);
-                else                                    // 근거리 -> 직접 추적
-                    DirectChase();
+                //현재 모드에 따라 다른 임계값 사용 (왔다갔다 방지)
+                switch (currentChaseMode)
+                {
+                    case ChaseMode.WideFormation:
+                        if(distanceToPlayer <= formationDistance - modeTransitionBuffer)
+                        {
+                            currentChaseMode = ChaseMode.NarrowFormation;
+                            MoveToFormation(6f);
+                        }
+                        else
+                        {
+                            MoveToFormation(12f);
+                        }
+                        break;
+                    
+                    case ChaseMode.NarrowFormation:
+                        if(distanceToPlayer > formationDistance + modeTransitionBuffer)
+                        {
+                            currentChaseMode = ChaseMode.WideFormation;
+                            MoveToFormation(12f);
+                        }
+                        else if(distanceToPlayer <= directChaseDistance - modeTransitionBuffer)
+                        {
+                            currentChaseMode = ChaseMode.DirectChase;
+                            DirectChase();
+                        }
+                        else
+                        {
+                            MoveToFormation(6f);
+                        }
+                        break;
+                    
+                    case ChaseMode.DirectChase:
+                        if(distanceToPlayer > directChaseDistance + modeTransitionBuffer)
+                        {
+                            currentChaseMode = ChaseMode.NarrowFormation;
+                            MoveToFormation(6f);
+                        }
+                        else
+                        {
+                            DirectChase();
+                        }
+                        break;
+                }
             }
-
             //포메이션 상태일 때도 지속적으로 위치 갱신
             if (isInFormation)
             {
@@ -147,10 +186,11 @@ public class Ai_Script : MonoBehaviour
             }
 
             //추격 중단 조건
-            if (loseTimer >= ChaseTime && distanceToPlayer >= stopChaseDis)
+            if (loseTimer >= ChaseTime && distanceToPlayer >= stopChaseDis && !PlayerInSight())
             {
                 isChasing = false;
                 isInFormation = false;
+                currentChaseMode = ChaseMode.WideFormation;
                 animator.SetBool("isChase", false);
                 animator.SetBool("isWalk", true);
                 loseTimer = 0f;
@@ -251,6 +291,8 @@ public class Ai_Script : MonoBehaviour
 
         //플레이어 추적 80프로 + Flocking 20프로
         Vector3 finalDir = (toPlayer * 0.8f + flockingDir * 0.2f).normalized;
+
+        //플레이어 바로 뒤 1m 지점을 목표로
         Vector3 targetPos = player.position + (transform.position - player.position).normalized * 1f;
 
         agent.SetDestination(targetPos);
