@@ -89,6 +89,7 @@ public class Ai_Script : MonoBehaviour
         if (!isChasing && AIBlackboard.Instance.playerDetect)    //? 순찰중 플레이어 위치 공유 받을때 
         {
             isChasing = true;
+            agent.isStopped = false;
             agent.SetDestination(AIBlackboard.Instance.lastPos);
             Debug.Log($"{gameObject.name} 플레이어 정보 공유 받음!");
         }
