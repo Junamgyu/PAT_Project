@@ -78,18 +78,17 @@ public class Ai_Script : MonoBehaviour
     {
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if (!isChasing && (PlayerInSight() || distanceToPlayer <= chaseDis))     //플레이어가 시야 안에 있거나 일정거리 내에 들어왔을 때 추격 시작
+        if (!isChasing && (PlayerInSight() || distanceToPlayer <= chaseDis))                    //플레이어가 시야 안에 있거나 일정거리 내에 들어왔을 때 추격 시작
         {
-            agent.isStopped = false;    //이동 재게
+            agent.isStopped = false;                                                            //이동 재게
             isChasing = true;
-            AIBlackboard.Instance.ReportPlayer(player.position);        //? 공유 알림
+            AIBlackboard.Instance.ReportPlayer(player.position);                                //? 공유 알림
         }
 
         //블랙보드 기반 추격
         if (!isChasing && AIBlackboard.Instance.playerDetect)    //? 순찰중 플레이어 위치 공유 받을때 
         {
             isChasing = true;
-            agent.isStopped = false;
             agent.SetDestination(AIBlackboard.Instance.lastPos);
             Debug.Log($"{gameObject.name} 플레이어 정보 공유 받음!");
         }
@@ -97,6 +96,7 @@ public class Ai_Script : MonoBehaviour
         // == 추적 상태 == //
         if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
+            agent.speed = 5f;
             agent.isStopped = false;  //추격중에는 항상 이동 가능하게
 
             animator.SetBool("isChase", true);
@@ -220,7 +220,7 @@ public class Ai_Script : MonoBehaviour
         else
         {
             Patrol();
-
+            agent.speed = 2f;
         }
     }
 
@@ -311,8 +311,7 @@ public class Ai_Script : MonoBehaviour
     void Patrol()       //순찰모드 
     {
         if (patrolPoint.Length == 0) return;
-        if (agent.pathPending) return;               //경로 계산중 이거나 목적지까지 도달하지 않았음 이동
-
+        if (agent.pathPending) return;          //경로 계산중 이거나 목적지까지 도달하지 않았음 이동
         //도착 거리 확인
         if (agent.remainingDistance < 0.5f)
         {
@@ -321,8 +320,8 @@ public class Ai_Script : MonoBehaviour
             //지점 도착후 3초 이상일 경우 다른 지점으로 이동   
             if (waitTimer >= waitDuration)
             {
-                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoint.Length;         //현재 순찰 인덱스를 다음 인덱스로 변환
-                agent.SetDestination(patrolPoint[currentPatrolIndex].position);             //해당 인덱스로 이동
+                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoint.Length;      //현재 순찰 인덱스를 다음 인덱스로 변환
+                agent.SetDestination(patrolPoint[currentPatrolIndex].position);          //해당 인덱스로 이동
                 waitTimer = 0f;
             }
             else
@@ -338,16 +337,17 @@ public class Ai_Script : MonoBehaviour
         }
     }
 
-    bool PlayerInSight()        //플레이어가 Ai의 시야각 및 시야 감지 거리 내에 있는지 확인
+    bool PlayerInSight()                                                        //플레이어가 Ai의 시야각 및 시야 감지 거리 내에 있는지 확인
     {
         Vector3 dirToPlayer = player.position - transform.position;             //Ai에서 플레이어로 향하는 방향 벡터 계산
         float angle = Vector3.Angle(dirToPlayer, transform.forward);            //Ai의 정면과 플레이어 방향 사이의 각도 계산
 
-        //계산된 각도가 설정한 시야각 보다 작을때
-        if (angle < aiAngle * 0.5f)         //aiAngle / 2 보다 작을때
+
+        if (angle < aiAngle * 0.5f)                                             //aiAngle / 2 보다 작을때 // 계산된 각도가 설정한 시야각 보다 작을때
         {
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, dirToPlayer.normalized, out hit, detectionRange))
+            if (Physics.Raycast(transform.position, dirToPlayer.normalized, 
+            out hit, detectionRange))
             {
                 if (hit.transform == player)
                 {

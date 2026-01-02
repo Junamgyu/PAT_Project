@@ -2416,10 +2416,10 @@ PrefabInstance:
       addedObject: {fileID: 700781204}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 700781203}
+      addedObject: {fileID: 700781202}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 700781202}
+      addedObject: {fileID: 700781206}
   m_SourcePrefab: {fileID: 100100000, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
 --- !u!1 &259518262
 GameObject:
@@ -3002,10 +3002,10 @@ PrefabInstance:
       addedObject: {fileID: 817326490}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 817326492}
+      addedObject: {fileID: 817326494}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 817326494}
+      addedObject: {fileID: 817326496}
   m_SourcePrefab: {fileID: 100100000, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
 --- !u!1 &330585543
 GameObject:
@@ -5162,10 +5162,10 @@ PrefabInstance:
       addedObject: {fileID: 1457006287}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1457006286}
+      addedObject: {fileID: 1457006285}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1457006285}
+      addedObject: {fileID: 1457006289}
   m_SourcePrefab: {fileID: 100100000, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
 --- !u!1 &630519536
 GameObject:
@@ -5638,34 +5638,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &646490436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 646490434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6577c081c90a9e34f98b02934e96d07e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
-  player: {fileID: 1863053227}
-  patrolPoint:
-  - {fileID: 1972918475}
-  - {fileID: 1907128075}
-  - {fileID: 1052541746}
-  - {fileID: 1040999370}
-  chaseDis: 10
-  stopChaseDis: 15
-  detectionRange: 20
-  aiAngle: 90
-  ChaseTime: 3
-  loseTimer: 0
-  formationDistance: 12
-  directChaseDistance: 8
-  formationReachThreshold: 2
-  modeTransitionBuffer: 1.5
 --- !u!195 &646490437
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5693,6 +5665,34 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
   m_PrefabInstance: {fileID: 2105500941}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &646490439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646490434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 454289d36a2e73a4cb6820e8d9799c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
+  player: {fileID: 1863053227}
+  patrolPoint:
+  - {fileID: 1052541746}
+  - {fileID: 1040999370}
+  - {fileID: 1972918475}
+  - {fileID: 1907128075}
+  chaseDis: 10
+  stopChaseDis: 15
+  detectionRange: 20
+  aiAngle: 90
+  ChaseTime: 5
+  loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 8
+  formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!1001 &667655312
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5715,11 +5715,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -33.69
+      value: -1.84
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.37
+      value: 3.8
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6245,34 +6245,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &700781203
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 700781201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6577c081c90a9e34f98b02934e96d07e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
-  player: {fileID: 1863053227}
-  patrolPoint:
-  - {fileID: 1972918475}
-  - {fileID: 1052541746}
-  - {fileID: 1907128075}
-  - {fileID: 1040999370}
-  chaseDis: 10
-  stopChaseDis: 15
-  detectionRange: 20
-  aiAngle: 90
-  ChaseTime: 3
-  loseTimer: 0
-  formationDistance: 12
-  directChaseDistance: 8
-  formationReachThreshold: 2
-  modeTransitionBuffer: 1.5
 --- !u!195 &700781204
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -6300,6 +6272,34 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
   m_PrefabInstance: {fileID: 251763045}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &700781206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 700781201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 454289d36a2e73a4cb6820e8d9799c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
+  player: {fileID: 1863053227}
+  patrolPoint:
+  - {fileID: 1972918475}
+  - {fileID: 1052541746}
+  - {fileID: 1907128075}
+  - {fileID: 1040999370}
+  chaseDis: 10
+  stopChaseDis: 15
+  detectionRange: 20
+  aiAngle: 90
+  ChaseTime: 5
+  loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 8
+  formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!1 &720133016
 GameObject:
   m_ObjectHideFlags: 0
@@ -6835,7 +6835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 033002a7fb2c92c4896df7c5ccf1cae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimer
-  gameTime: 40
+  gameTime: 180
   timerText: {fileID: 293789597}
   gameOverPanel: {fileID: 139086131}
   reStartButton: {fileID: 1355743725}
@@ -7535,34 +7535,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &817326492
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 817326489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6577c081c90a9e34f98b02934e96d07e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
-  player: {fileID: 1863053227}
-  patrolPoint:
-  - {fileID: 1040999370}
-  - {fileID: 1052541746}
-  - {fileID: 1907128075}
-  - {fileID: 1972918475}
-  chaseDis: 10
-  stopChaseDis: 15
-  detectionRange: 20
-  aiAngle: 90
-  ChaseTime: 3
-  loseTimer: 0
-  formationDistance: 12
-  directChaseDistance: 8
-  formationReachThreshold: 2
-  modeTransitionBuffer: 1.5
 --- !u!95 &817326494
 Animator:
   serializedVersion: 7
@@ -7590,6 +7562,34 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
   m_PrefabInstance: {fileID: 322674992}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &817326496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817326489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 454289d36a2e73a4cb6820e8d9799c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
+  player: {fileID: 1863053227}
+  patrolPoint:
+  - {fileID: 1040999370}
+  - {fileID: 1052541746}
+  - {fileID: 1907128075}
+  - {fileID: 1972918475}
+  chaseDis: 10
+  stopChaseDis: 15
+  detectionRange: 20
+  aiAngle: 90
+  ChaseTime: 5
+  loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 8
+  formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!1 &827702327
 GameObject:
   m_ObjectHideFlags: 0
@@ -13838,34 +13838,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1457006286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457006284}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6577c081c90a9e34f98b02934e96d07e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
-  player: {fileID: 1863053227}
-  patrolPoint:
-  - {fileID: 1907128075}
-  - {fileID: 1040999370}
-  - {fileID: 1972918475}
-  - {fileID: 1052541746}
-  chaseDis: 10
-  stopChaseDis: 15
-  detectionRange: 20
-  aiAngle: 90
-  ChaseTime: 3
-  loseTimer: 0
-  formationDistance: 12
-  directChaseDistance: 8
-  formationReachThreshold: 2
-  modeTransitionBuffer: 1.5
 --- !u!195 &1457006287
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -13893,6 +13865,34 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
   m_PrefabInstance: {fileID: 625808826}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1457006289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1457006284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 454289d36a2e73a4cb6820e8d9799c7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Ai_Script
+  player: {fileID: 1863053227}
+  patrolPoint:
+  - {fileID: 1907128075}
+  - {fileID: 1972918475}
+  - {fileID: 1052541746}
+  - {fileID: 1040999370}
+  chaseDis: 10
+  stopChaseDis: 15
+  detectionRange: 20
+  aiAngle: 90
+  ChaseTime: 5
+  loseTimer: 0
+  formationDistance: 12
+  directChaseDistance: 8
+  formationReachThreshold: 2
+  modeTransitionBuffer: 1.5
 --- !u!1 &1469720354
 GameObject:
   m_ObjectHideFlags: 0
@@ -19374,10 +19374,10 @@ PrefabInstance:
       addedObject: {fileID: 646490437}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 646490436}
+      addedObject: {fileID: 646490435}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 646490435}
+      addedObject: {fileID: 646490439}
   m_SourcePrefab: {fileID: 100100000, guid: c15f93451e281b24dbbaef13ea94f004, type: 3}
 --- !u!1 &2116600485
 GameObject:
@@ -19844,10 +19844,10 @@ SceneRoots:
   - {fileID: 1346212034}
   - {fileID: 1006871628}
   - {fileID: 161816299}
-  - {fileID: 1125374622}
   - {fileID: 578678930}
   - {fileID: 1382417888}
   - {fileID: 767047403}
   - {fileID: 307811340}
   - {fileID: 1319494802}
   - {fileID: 187262304}
+  - {fileID: 1125374622}
