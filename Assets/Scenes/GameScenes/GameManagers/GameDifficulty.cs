@@ -38,7 +38,6 @@ public class GameDifficulty : MonoBehaviour
     {
         currentDifficulty = difficulty;
         Debug.Log($"난이도 설정 : {difficulty}");
-
     }
 
     //현재 난이도에 필요한 열쇠 갯수 가져오기

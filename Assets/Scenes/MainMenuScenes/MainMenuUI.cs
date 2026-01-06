@@ -54,7 +54,6 @@ public class MainMenuUI : MonoBehaviour
         //초기 설정 메인 패널만 보이게 하기
         ShowMainPanel();
         UpdateDifficultyDisplay();
-
     }
 
     //메인 패널 표시
@@ -139,7 +138,7 @@ public class MainMenuUI : MonoBehaviour
         }
     }
 
-    void ResetButtonColor()
+    void ResetButtonColor()             //버튼 색상 기본으로 복구
     {
         ColorBlock defaultColors = ColorBlock.defaultColorBlock;
 

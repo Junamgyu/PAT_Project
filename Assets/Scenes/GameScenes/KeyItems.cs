@@ -63,7 +63,7 @@ public class KeyItems : MonoBehaviour
 
     void CollectKey()
     {
-        isCollected = false;
+        isCollected = true;
 
         if(KeyManager.Instance != null)
         {
