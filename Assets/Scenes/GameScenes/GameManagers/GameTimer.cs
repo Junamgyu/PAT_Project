@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class GameTimer : MonoBehaviour
 {
+    public static GameTimer Instance {get; private set;} //싱글톤 패턴
     [Header("타이머 설정")] 
     [SerializeField] private float gameTime = 180f;  // 180초 
     [Header("UI참조")]
@@ -17,6 +18,18 @@ public class GameTimer : MonoBehaviour
 
     private float remainingTime;
     private bool isTimerRunning = false;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -110,5 +123,10 @@ public class GameTimer : MonoBehaviour
         Cursor.visible = true;
         
         SceneManager.LoadScene("MainMenu");         //메인메뉴 씬으로 이동
+    }
+
+    public void StopTimer()
+    {
+        isTimerRunning = false;
     }
 }
