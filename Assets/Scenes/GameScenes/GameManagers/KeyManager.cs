@@ -11,7 +11,6 @@ public class KeyManager : MonoBehaviour
     [Header("UI 참조")]
     [SerializeField] private TextMeshProUGUI keyCountText;  // "3 / 5" 이런식으로 표현할 예정
     [SerializeField] private GameObject gameClearPannel;    //게임 클리어 패널
-    [SerializeField] private Button nextStageButton;    // 다음스테이지 버튼
     [SerializeField] private Button mainMenuButton;     //메인메뉴 버튼
 
     private int collectedKeys = 0; //현재 수집한 열쇠 갯수
@@ -40,7 +39,7 @@ public class KeyManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("GameDifficulty가 없습니다. 기본값 5개로 설정합니다.");
+            //Debug.LogWarning("GameDifficulty가 없습니다. 기본값 5개로 설정합니다.");
             requiredKeys = 5;
         }
 
@@ -48,12 +47,6 @@ public class KeyManager : MonoBehaviour
         if(gameClearPannel != null)
         {
             gameClearPannel.SetActive(false);
-        }
-        //버튼 이벤트 연결
-        
-        if(nextStageButton != null)
-        {
-            nextStageButton.onClick.AddListener(LoadNextStage);
         }
 
         if(mainMenuButton != null)
@@ -88,7 +81,7 @@ public class KeyManager : MonoBehaviour
     void GameClear()
     {
         isGameCleard = true;
-        Debug.Log("게임클리어!");
+        //Debug.Log("게임클리어!");
         
         //타이머 정지
         if (GameTimer.Instance != null)
@@ -103,15 +96,6 @@ public class KeyManager : MonoBehaviour
         {
             gameClearPannel.SetActive(true);
         }
-    }
-
-    void LoadNextStage()
-    {
-        Time.timeScale = 1f;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     void GoToMainMenu()
