@@ -25,7 +25,12 @@ public class Ai_Script : MonoBehaviour
     public float formationReachThreshold = 2f;  //포메이션 위치 도달 판정 거리
     public float modeTransitionBuffer = 1.5f;
     
-    
+    // == 공격 관련 변수 == //
+    [Header("Attack Settings")]
+    public float attackRange = 2f;          //공격 사거리 
+    public float attackDamage = 10f;        //공격 데미지
+    public float attackCooldown = 2f;       //공격 쿨타임
+    public float attackTimer = 0f;          //공격 타이머
 
     // == 내부 변수 ==
     private NavMeshAgent agent;     //추적 오브젝트
@@ -216,11 +221,22 @@ public class Ai_Script : MonoBehaviour
                 AIBlackboard.Instance.ClearDetection();
                 Debug.Log($"{gameObject.name} 추격 실패");
             }
+            //! 공격 범위 안에 들어오면 공격 //
+            if(distanceToPlayer <=attackRange)
+            {
+                AttackPlayer();
+            }
         }
         else
         {
             Patrol();
             agent.speed = 2f;
+        }
+
+        //! 공격 쿨타임 //
+        if(attackTimer > 0)
+        {
+            attackTimer -= Time.deltaTime;
         }
     }
 
@@ -358,6 +374,48 @@ public class Ai_Script : MonoBehaviour
         return false;
     }
 
+    //! 플레이어 공격 메서드 //
+    void AttackPlayer()
+    {
+        if(attackTimer > 0) return;
+
+        Vector3 lookDir = (player.position - transform.position).normalized;
+        lookDir.y = 0;
+        if(lookDir != Vector3.zero)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(lookDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10);
+        }
+
+        //애니메이션 재생
+        if(animator != null)
+        {
+            animator.SetTrigger("Attack");
+        }
+
+        PlayerHP playerHP = player.GetComponent<PlayerHP>();
+        if(playerHP != null)
+        {
+            playerHP.TakeDamage(attackDamage);
+            Debug.Log($"{gameObject.name}이(가) 플레이어를 공격");
+        }
+        
+        //공격 쿨타임 시작
+        attackTimer = attackCooldown;
+        
+        //공격중 잠시 멈춤
+        agent.isStopped = true;
+        Invoke(nameof(ResumeMovement), 0.5f); // 0.5초 이후 다시 움직임
+    }
+
+    void ResumeMovement()
+    {
+        if(isChasing)   
+        {
+            agent.isStopped = false;
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -372,6 +430,10 @@ public class Ai_Script : MonoBehaviour
         Vector3 leftLimit = Quaternion.Euler(0, -aiAngle / 2, 0) * transform.forward * detectionRange;
         Gizmos.DrawLine(transform.position, transform.position + rightLimit);
         Gizmos.DrawLine(transform.position, transform.position + leftLimit);
+
+        //! 공격 사거리
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
 

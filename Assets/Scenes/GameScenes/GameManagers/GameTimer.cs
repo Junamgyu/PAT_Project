@@ -19,6 +19,7 @@ public class GameTimer : MonoBehaviour
     private float remainingTime;
     private bool isTimerRunning = false;
 
+
     void Awake()
     {
         if (Instance == null)
@@ -90,6 +91,7 @@ public class GameTimer : MonoBehaviour
 
     void TimeOut()
     {
+        
         Debug.Log("TimeOut, Game Fail");
 
         //게임 정지
@@ -128,5 +130,10 @@ public class GameTimer : MonoBehaviour
     public void StopTimer()
     {
         isTimerRunning = false;
+    }
+
+    public void PlayerDead()
+    {
+        TimeOut();
     }
 }
