@@ -22,7 +22,9 @@ public class PlayerHP : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        isDead = false;
         currentHP = maxHP;
+
         UpdateHPUI();
     }
 
@@ -86,20 +88,7 @@ public class PlayerHP : MonoBehaviour
         {
             GameTimer.Instance.PlayerDead();
         }
-
-        //플레이어 이동 비활성화
-        PlayerScript playerScript = GetComponent<PlayerScript>();
-        if(playerScript != null)
-        {
-            playerScript.enabled = false;
-        }
-
-        //사망 애니메이션
-        Animator animator = GetComponent<Animator>();
-        if(animator != null)
-        {
-            animator.SetTrigger("Die");
-        }
+        
     }
 
     // 외부에서 변수 확인용 //

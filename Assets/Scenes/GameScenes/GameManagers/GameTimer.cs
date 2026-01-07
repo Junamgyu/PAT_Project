@@ -108,7 +108,7 @@ public class GameTimer : MonoBehaviour
 
     void RestartGame()
     {
-        Time.timeScale = 1f;    //게임시간 재ro
+        Time.timeScale = 1f;    //게임시간 재개
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;

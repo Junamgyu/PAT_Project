@@ -225,6 +225,10 @@ public class Ai_Script : MonoBehaviour
             if(distanceToPlayer <=attackRange)
             {
                 AttackPlayer();
+                animator.SetBool("isAttack", true);
+            }else
+            {
+                animator.SetBool("isAttack", false);
             }
         }
         else
@@ -390,7 +394,7 @@ public class Ai_Script : MonoBehaviour
         //애니메이션 재생
         if(animator != null)
         {
-            animator.SetTrigger("Attack");
+            animator.SetTrigger("isAttack");
         }
 
         PlayerHP playerHP = player.GetComponent<PlayerHP>();
@@ -405,6 +409,7 @@ public class Ai_Script : MonoBehaviour
         
         //공격중 잠시 멈춤
         agent.isStopped = true;
+        animator.ResetTrigger("isAttack");
         Invoke(nameof(ResumeMovement), 0.5f); // 0.5초 이후 다시 움직임
     }
 

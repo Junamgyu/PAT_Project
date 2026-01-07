@@ -5931,7 +5931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.56
+      value: 1.68
       objectReference: {fileID: 0}
     - target: {fileID: 8073086772555192299, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5975,9 +5975,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4132312772176831909, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1863053226}
-    - targetCorrespondingSourceObject: {fileID: 4132312772176831909, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 1863053228}
     - targetCorrespondingSourceObject: {fileID: 4132312772176831909, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       insertIndex: -1
@@ -5985,6 +5982,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4132312772176831909, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1863053230}
+    - targetCorrespondingSourceObject: {fileID: 4132312772176831909, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1863053226}
     - targetCorrespondingSourceObject: {fileID: 4132312772176831909, guid: 64b182395c0b6744a920c74bce3ece13, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1863053231}
@@ -7273,7 +7273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 033002a7fb2c92c4896df7c5ccf1cae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameTimer
-  gameTime: 20
+  gameTime: 180
   timerText: {fileID: 293789597}
   gameOverPanel: {fileID: 139086131}
   reStartButton: {fileID: 1355743725}
@@ -22007,8 +22007,8 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 667655312}
   - {fileID: 1346212034}
+  - {fileID: 667655312}
   - {fileID: 1006871628}
   - {fileID: 578678930}
   - {fileID: 1876605596}

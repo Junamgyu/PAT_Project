@@ -150,6 +150,8 @@ public class MainMenuUI : MonoBehaviour
 
     public void StartGame()
     {
+        Time.timeScale = 1f;
+        
         if(GameDifficulty.Instance != null)
         {
             GameDifficulty.Instance.SetDifficulty(selectedDifficulty);

@@ -41,7 +41,7 @@ public class AIBlackboard : MonoBehaviour
         {
             aiAgents.Add(ai);
             ReassignFormationAngles();          //새 AI 추가 시 각도 재할당
-            Debug.Log($"{ai.name} AI 등록됨. 총  AI 수 : {aiAgents.Count}");
+            //Debug.Log($"{ai.name} AI 등록됨. 총  AI 수 : {aiAgents.Count}");
         }
     }
 
@@ -52,7 +52,7 @@ public class AIBlackboard : MonoBehaviour
             aiAgents.Remove(ai);
             assingedAngles.Remove(ai);
             ReassignFormationAngles();       // AI 제거 시 각도 재할당
-            Debug.Log($"{ai.name} AI 등록 해제됨. 총  AI 수 : {aiAgents.Count}");
+            //Debug.Log($"{ai.name} AI 등록 해제됨. 총  AI 수 : {aiAgents.Count}");
         }
     }
 

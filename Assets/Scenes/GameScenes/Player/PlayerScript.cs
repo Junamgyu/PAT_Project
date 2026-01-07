@@ -5,8 +5,6 @@ public class PlayerScript : MonoBehaviour
 {
     public float runSpeed;
     public float rotationSpeed = 10f;
-
-
     Animator animator;
     private Transform Cam; // 카메라 transform을 저장할 변수
     private CharacterController controller;     //CharacterController 참조
@@ -18,14 +16,31 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        Time.timeScale = 1f;
         animator = GetComponent<Animator>();
         Cam = Camera.main.transform; // 메인 카메라의 트렌스폼을 가져옴
         controller = GetComponent<CharacterController>();   //CharacterController 컴포넌트를 가져옴
+
     }
 
     // Update is called once per frame
     void Update()
     {
+          // Animator null 체크
+        if (animator == null)
+        {
+            Debug.LogError("Update: Animator가 NULL!");
+            return;
+        }
+        
+        // Animator 비활성화 체크
+        if (!animator.enabled)
+        {
+            Debug.LogWarning("Update: Animator가 비활성화됨!");
+            animator.enabled = true;
+        }
+
+
         //중력 처리
         //CharacterCOntroller가 땅에 닿아있는지 확인
         bool isGrounded = controller.isGrounded;
