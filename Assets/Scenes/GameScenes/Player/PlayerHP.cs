@@ -70,13 +70,11 @@ public class PlayerHP : MonoBehaviour
         {
             hpSlider.value = currentHP / maxHP;
         }
-
         if(hpText != null)
         {
             hpText.text = $"{currentHP:F0} / {maxHP:F0}";
         }
     }
-
     void Die()
     {
         if(isDead) return;

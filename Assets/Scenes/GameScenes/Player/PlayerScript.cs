@@ -20,7 +20,6 @@ public class PlayerScript : MonoBehaviour
         animator = GetComponent<Animator>();
         Cam = Camera.main.transform; // 메인 카메라의 트렌스폼을 가져옴
         controller = GetComponent<CharacterController>();   //CharacterController 컴포넌트를 가져옴
-
     }
 
     // Update is called once per frame
