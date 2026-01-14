@@ -91,18 +91,17 @@ public class Ai_Script : MonoBehaviour
         }
 
         //블랙보드 기반 추격
-        if (!isChasing && AIBlackboard.Instance.playerDetect)    //? 순찰중 플레이어 위치 공유 받을때 
+        if (!isChasing && AIBlackboard.Instance.playerDetect)                                   //? 순찰중 플레이어 위치 공유 받을때 
         {
             isChasing = true;
             agent.SetDestination(AIBlackboard.Instance.lastPos);
-            Debug.Log($"{gameObject.name} 플레이어 정보 공유 받음!");
         }
 
         // == 추적 상태 == //
-        if (isChasing)      //추적 중이라면 시야 및 거리 기반으로 유지/해제
+        if (isChasing)                                                                          //추적 중이라면 시야 및 거리 기반으로 유지/해제
         {
             agent.speed = 5f;
-            agent.isStopped = false;  //추격중에는 항상 이동 가능하게
+            agent.isStopped = false;                                                            //추격중에는 항상 이동 가능하게
 
             animator.SetBool("isChase", true);
             animator.SetBool("isWalk", false);
@@ -110,9 +109,9 @@ public class Ai_Script : MonoBehaviour
             //시야에 있거나 가까이 있으면 위치 갱신
             if (PlayerInSight() || (distanceToPlayer <= detectionRange))
             {
-                loseTimer = 0f;     //시야 안이면 타이머 초기화
-                AIBlackboard.Instance.ReportPlayer(player.position);    //? 플레이어 위치 갱신
-                AIBlackboard.Instance.formationCenter = player.position;   //? Forma
+                loseTimer = 0f;                                                                             //시야 안이면 타이머 초기화
+                AIBlackboard.Instance.ReportPlayer(player.position);                                        //? 플레이어 위치 갱신
+                AIBlackboard.Instance.formationCenter = player.position;                                     //? Forma
             }
             else
             {
@@ -125,7 +124,7 @@ public class Ai_Script : MonoBehaviour
             {
                 updateTimer = 0f;
 
-                //현재 모드에 따라 다른 임계값 사용 (왔다갔다 방지)
+                //현재 모드에 따라 다른 임계값 사용 
                 switch (currentChaseMode)
                 {
                     case ChaseMode.WideFormation:
@@ -331,13 +330,13 @@ public class Ai_Script : MonoBehaviour
     void Patrol()       //순찰모드 
     {
         if (patrolPoint.Length == 0) return;
-        if (agent.pathPending) return;          //경로 계산중 이거나 목적지까지 도달하지 않았음 이동
-        //도착 거리 확인
-        if (agent.remainingDistance < 0.5f)
-        {
-            waitTimer += Time.deltaTime;        //! 지점 도착후 타이머 시작
+        if (agent.pathPending) return;                  //경로 계산중
 
-            //지점 도착후 3초 이상일 경우 다른 지점으로 이동   
+        if (agent.remainingDistance < 0.5f)             //도착 거리 확인
+        {
+            waitTimer += Time.deltaTime;                
+
+            // 3초 대기 후    
             if (waitTimer >= waitDuration)
             {
                 currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoint.Length;      //현재 순찰 인덱스를 다음 인덱스로 변환
@@ -391,26 +390,18 @@ public class Ai_Script : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 10);
         }
 
-        //애니메이션 재생
-        if(animator != null)
-        {
-            animator.SetTrigger("isAttack");
-        }
-
         PlayerHP playerHP = player.GetComponent<PlayerHP>();
         if(playerHP != null)
         {
             playerHP.TakeDamage(attackDamage);
-            Debug.Log($"{gameObject.name}이(가) 플레이어를 공격");
         }
         
-        //공격 쿨타임 시작
+        //쿨타임 시작
         attackTimer = attackCooldown;
         
         //공격중 잠시 멈춤
         agent.isStopped = true;
-        animator.ResetTrigger("isAttack");
-        Invoke(nameof(ResumeMovement), 0.5f); // 0.5초 이후 다시 움직임
+        Invoke(nameof(ResumeMovement), 0.5f); 
     }
 
     void ResumeMovement()

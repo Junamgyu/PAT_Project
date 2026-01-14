@@ -19,7 +19,6 @@ public class GameTimer : MonoBehaviour
     private float remainingTime;
     private bool isTimerRunning = false;
 
-
     void Awake()
     {
         if (Instance == null)
@@ -36,11 +35,11 @@ public class GameTimer : MonoBehaviour
     void Start()
     {
         remainingTime = gameTime;
-        isTimerRunning = true;      //게임 시작시 카운트 시작
+        isTimerRunning = true;          //게임 시작시 카운트 시작
         
         if(gameOverPanel != null)
         {
-            gameOverPanel.SetActive(false);         //시작할 경우 게임오버 패널 가리기
+            gameOverPanel.SetActive(false);                                             //시작할 경우 게임오버 패널 가리기
         }
         
         if(reStartButton != null)               // 다시하기
@@ -54,8 +53,6 @@ public class GameTimer : MonoBehaviour
 
         UpdateTimerDisplay();
     }
-
-    // Update is called once per frame
     void Update()
     {
         if(isTimerRunning)
@@ -113,10 +110,9 @@ public class GameTimer : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);     //현재 씬 재시작
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);                 //현재 씬 재시작
 
     }
-    
     void GoToMainMenu()
     {
         Time.timeScale = 1f;
@@ -124,7 +120,7 @@ public class GameTimer : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         
-        SceneManager.LoadScene("MainMenu");         //메인메뉴 씬으로 이동
+        SceneManager.LoadScene("MainMenu");                                     //메인메뉴 씬으로 이동
     }
 
     public void StopTimer()

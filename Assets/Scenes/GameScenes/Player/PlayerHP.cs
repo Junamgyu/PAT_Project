@@ -44,23 +44,17 @@ public class PlayerHP : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if(isDead || isInvincible) return;
+        if(isDead || isInvincible) return;      //중복 실행 방지
 
         currentHP -= damage;
-        currentHP = Mathf.Max(0, currentHP);    //0 이하로 내려가지 않게 하기 위함
+        currentHP = Mathf.Max(0, currentHP);    //0 이하 X 
         
-        //무적 시간은 1초
         isInvincible = true;
         invincibleTimer = invincibleTime;
 
         UpdateHPUI();
 
-        Debug.Log($"플레이어 피격 현재 HP : {currentHP} / {maxHP}");
-
-        if(currentHP <= 0)
-        {
-            Die();
-        }
+        if(currentHP <= 0) Die();
     }
 
     //체력 UI업데이트
@@ -80,13 +74,11 @@ public class PlayerHP : MonoBehaviour
         if(isDead) return;
 
         isDead = true;
-        Debug.Log("플레이어 사망!");
         
         if(GameTimer.Instance != null)
         {
             GameTimer.Instance.PlayerDead();
         }
-        
     }
 
     // 외부에서 변수 확인용 //

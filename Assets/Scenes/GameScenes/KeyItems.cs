@@ -16,8 +16,6 @@ public class KeyItems : MonoBehaviour
         //현재 난이도에 따라 열쇠 활성/비활성
         CheckDifficultyActive();
     }
-
-    // Update is called once per frame
     void Update()
     {
         if(rotateKey && !isCollected)
@@ -29,7 +27,6 @@ public class KeyItems : MonoBehaviour
     {
         if(GameDifficulty.Instance == null)
         {
-            Debug.LogWarning($"GameDifficulty 인스턴스가 없습니다!");
             return;
         }
         Difficulty currentDifficulty = GameDifficulty.Instance.GetCurrentDifficulty();

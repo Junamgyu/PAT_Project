@@ -45,7 +45,7 @@ public class MainMenuUI : MonoBehaviour
             quitButton.onClick.AddListener(QuitGame);
         }
 
-        //난이도 선택 버튼
+        
         if(easyButton != null) easyButton.onClick.AddListener(() => SelectDifficulty(Difficulty.Easy));
         if(normalButton != null) normalButton.onClick.AddListener(() => SelectDifficulty(Difficulty.Normal));
         if(hardButton != null) hardButton.onClick.AddListener(() => SelectDifficulty(Difficulty.Hard));

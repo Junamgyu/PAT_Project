@@ -3,16 +3,13 @@ using UnityEngine;
 
 public class AIBlackboard : MonoBehaviour
 {
-    public static AIBlackboard Instance;    //singleton (모든 Ai가 접근)
+    public static AIBlackboard Instance;                //singleton (모든 Ai가 접근)
 
     public bool playerDetect = false;
-    public Vector3 lastPos;             //마지막으로 감지된 플레이어 위치 
-
+    public Vector3 lastPos;                                  //마지막으로 감지된 플레이어 위치 
     private float lastUpdateTime = 0f;
 
-
-    // == Formation Flocking Settings ==
-    public List<Transform> aiAgents = new List<Transform>();    //모든 AI등록 리스트
+    public List<Transform> aiAgents = new List<Transform>();                //모든 AI등록 리스트
     public float neighborRadius = 5f;           //? 근처 AI 탐지 변경
     public float separationWeight = 1.5f;       //? 거리 유지
     public float alignmentWeight = 1f;          //? 방향 정렬
@@ -97,14 +94,12 @@ public class AIBlackboard : MonoBehaviour
     {
         if (!assingedAngles.ContainsKey(self))
         {
-            Debug.LogWarning($"{self.name}에게 할당된 포메이션 각도가 없음");
             return centerPos;
         }
 
         float angle = assingedAngles[self];
 
         //원형 배치 계산
-
         Vector3 offset = new Vector3(
             Mathf.Cos(angle * Mathf.Deg2Rad),
             0,
@@ -126,9 +121,9 @@ public class AIBlackboard : MonoBehaviour
     //Flocking 방향 계산 (포메이션과 분리)
     public Vector3 GetFlockingDir(Transform self)
     {
-        Vector3 separation = Vector3.zero;
-        Vector3 alignment = Vector3.zero;
-        Vector3 cohesion = Vector3.zero;
+        Vector3 separation = Vector3.zero;          //분리
+        Vector3 alignment = Vector3.zero;           //정렬
+        Vector3 cohesion = Vector3.zero;            //응집
         int neighborCount = 0;
 
         foreach (var agent in aiAgents)

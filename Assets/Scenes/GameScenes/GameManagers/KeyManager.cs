@@ -39,7 +39,6 @@ public class KeyManager : MonoBehaviour
         }
         else
         {
-            //Debug.LogWarning("GameDifficulty가 없습니다. 기본값 5개로 설정합니다.");
             requiredKeys = 5;
         }
 
@@ -62,26 +61,19 @@ public class KeyManager : MonoBehaviour
         collectedKeys++;
         UpdateKeyUI();
 
-        Debug.Log($"열쇠 수집! {collectedKeys} / {requiredKeys}");
-
         if (collectedKeys >= requiredKeys)
         {
             GameClear();
         }
     }
-
     void UpdateKeyUI()
     {
-        if(keyCountText != null)
-        {
-            keyCountText.text = $"{collectedKeys} / {requiredKeys}";
-        }
+        if(keyCountText != null)  keyCountText.text = $"{collectedKeys} / {requiredKeys}";
+        
     }
-
     void GameClear()
     {
         isGameCleard = true;
-        //Debug.Log("게임클리어!");
         
         //타이머 정지
         if (GameTimer.Instance != null)
